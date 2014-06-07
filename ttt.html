@@ -175,6 +175,7 @@
 								if (toggle.hasOwnProperty(i)) $(i).onclick = null
 							}
 							leaderboard(pName, 1)
+							return;
 						}
 					}
 				}
@@ -189,6 +190,7 @@
 						if (toggle.hasOwnProperty(i)) $(i).onclick = null
 					}
 					leaderboard(pName, 0)
+					return;
 				}
 				startAI(id); //does next move, checks for win, starts timer
 				
