@@ -1,0 +1,77 @@
+1. Prevent user from completing triplet
+2. Complete own triplet
+3. If user put in centre:
+	1. Fill side
+4. Else
+	1. Fill corner
+
+8 total triplet configurations
+total sum = 2: 110 or 101 are valid
+
+--------------------------------------------
+
+Top Down Refinement
+===================
+
+Give options
+Play game
+Register Leaderboard
+
+---
+
+Give options
+	Form with radio button and submit: 1P or 2P
+	Calls JS function startgame with radio button value
+	JS function hides form
+Start game
+	//gonna hide form
+	//gonna make the grid visible
+	startgame(radioButtonVal):
+		Create associative array of elements (toggle['tXX']) of 9 values set to 0
+		Create a-array of all row sets (all 8 of 'em)
+		1P
+			Get player namein pName
+			Call random 0 or 1
+			If 0: //PC first ...
+			Else: //Player first
+				Display message "You first!"
+				onclick:
+					Get clicked element in 'elem'
+					If toggle[$(elem)]==0:
+						Set toggle as 3 //player owns elem => 3, empty=>0, Pc=>1
+						If (win(elem)): //playerwin should highlight win row
+							Declare player won
+							Call leaderboard(pName, 1)
+							Get out of this whole mess, return 1
+						//else
+						If (noEmptySquare()) : //draw match, can only happen on player move
+							Declare Draw
+							Return 3
+							
+						var aiElem = startAI(elem) //returns element which it clicked on
+						If (win(aiElem)) : //win should first look for a 0 value: AI won automatic
+							Declare AI won
+							Call leaderboard(pName, 0)
+							Get out of this whole mess, return 0
+					Else:
+						Do nothing, return 4
+		2P
+	
+	startAI(playerElem) {
+		/*
+			1. Win it
+			2. Block player
+			3. If playerElem==22, put in side
+			4. Else put in Corner
+		*/
+		Check all rows till sum==2 found
+			if yes, fill empty square in that row with 1, call a win and exit this with return 0
+		//block
+		Check all rows till sum==6 found
+			if yes, fill empty square in that row with 1, return the emptysquareElem
+		//put in side
+		if playerElem.id==t22
+			check t11, t13, t31 and t33: put in first empty square, return its id
+		else :
+			check t21, t12, t23, t32: put in first empty square, return its id
+	}

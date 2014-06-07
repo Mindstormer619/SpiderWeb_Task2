@@ -1,0 +1,409 @@
+<!doctype html>
+
+<html>
+<head>
+	<title>Tic Tac Toe!</title>
+	<style>
+		#tttHolder {
+			margin-left:auto;
+			margin-right:auto;
+			width:40%;
+			height:0;
+			//padding-bottom:40%;
+			background-color:silver;
+			overflow:hidden;
+		}
+		
+		.ticCell {
+			border-style:solid;
+			border-width:1px;
+			height:calc((100% - 6px) / 3);
+			width:calc((100% - 6px) / 3);
+			display:block;
+			float:left;
+			text-align:center;
+		}
+		/*
+		#t21, #t31 {
+			clear:left;
+		}
+		*/
+		.helper {
+			display: inline-block;
+			height: 100%;
+			vertical-align: middle;
+		}
+		
+		img {
+			vertical-align: middle;
+			height:80%; 
+			width:80%; 
+			display:none;
+		}
+	</style>
+	<script>
+		function getStyle(oElm, strCssRule){
+			var strValue = "";
+			if(document.defaultView && document.defaultView.getComputedStyle){
+				strValue = document.defaultView.getComputedStyle(oElm, "").getPropertyValue(strCssRule);
+			}
+			else if(oElm.currentStyle){
+				strCssRule = strCssRule.replace(/\-(\w)/g, function (strMatch, p1){
+					return p1.toUpperCase();
+				});
+				strValue = oElm.currentStyle[strCssRule];
+			}
+			return strValue;
+		}
+		window.onresize = 
+			function() {
+				document.getElementById("tttHolder").style.height = getStyle( document.getElementById("tttHolder"),"width" );
+			}
+		window.onload=window.onresize;
+		
+		function $(id) {
+			return document.getElementById(id);
+		}
+		var toggle = {
+				"t11":0,
+				"t12":0,
+				"t13":0,
+				"t21":0,
+				"t22":0,
+				"t23":0,
+				"t31":0,
+				"t32":0,
+				"t33":0
+			};
+			var empties = {
+				"t11":0,
+				"t12":0,
+				"t13":0,
+				"t21":0,
+				"t22":0,
+				"t23":0,
+				"t31":0,
+				"t32":0,
+				"t33":0
+			};
+			var rowsets = {
+				"row1": ['t11','t12','t13'],
+				"row2": ['t21','t22','t23'],
+				"row3": ['t31','t32','t33'],
+				"row4": ['t11','t21','t31'],
+				"row5": ['t12','t22','t32'],
+				"row6": ['t13','t23','t33'],
+				"row7": ['t11','t22','t33'],
+				"row8": ['t13','t22','t31']
+			};
+			
+			var timey=10;
+			var timer = setInterval(function() {
+				if (timey==0) {
+					$('timer').innerHTML=timey;
+					timey=10;
+					randomIn();
+					return
+				}
+				$('timer').innerHTML=timey;
+				timey--;
+			}, 1000);
+			clearInterval(timer);
+			var pName;
+		
+		function game1P() {
+			$('pModeSelect').style.display="none";
+			$('tttHolder').style.display = "block";
+			document.getElementById("tttHolder").style.height = getStyle( document.getElementById("tttHolder"),"width" );
+			$('pTurn').style.display = "initial";
+			
+			pName = prompt("Enter your name, player.");
+			resetTimer();
+		
+			/*
+			for (var key in toggle) {
+				if (toggle.hasOwnProperty(key)) {
+					$(key).onclick = function() {
+						playerClick(key);
+					};
+				}
+			}
+			*/
+		}
+			
+			function randomIn() {
+				clearInterval(timer);
+				timey=10;
+				var keys = Object.keys(empties); //list of ids
+				var rkey = keys[Math.floor(keys.length * Math.random())];
+				setClick(3, rkey);
+				resetTimer();
+			}
+		function leaderboard(pname, score) {
+			$('tttHolder').style.display="none";
+			$('pTurn').style.display="none";
+			$('board').style.display="initial";
+			if(localStorage[pname]) {
+				localStorage[pname] = Number(localStorage[pname]) + score;
+			}
+			else {
+				localStorage.setItem(pname, score);
+			}
+			var strOpen = "<tr><td>"
+			var strMid = "</td><td>"
+			var strEnd = "</td></tr>"
+			for (var i=0; i<localStorage.length; i++) {
+				$('lBoard').innerHTML += strOpen + localStorage.key(i) + strMid +localStorage.getItem(localStorage.key(i)) + strEnd;
+			}
+		}
+		function playerClick(id) {
+				var elem = $(id);
+				//alert(id);
+				if (toggle[id]!=0) {
+					return;
+				}
+				clearInterval(timer);
+				setClick(3, id); //define this!!
+				for (var key in rowsets) {
+					if (rowsets.hasOwnProperty(key)) {
+						if(toggle[rowsets[key][0]] +
+							toggle[rowsets[key][1]] +
+							toggle[rowsets[key][2]] == 9) {
+							alert("You win, player!");
+							clearInterval(timer);
+							for (var i in toggle) {
+								if (toggle.hasOwnProperty(i)) $(i).onclick = null
+							}
+							leaderboard(pName, 1)
+						}
+					}
+				}
+				var k = 0;
+				for (var i in empties) {
+					if(empties.hasOwnProperty(i)) k++;
+				}
+				if (k==0) {
+					alert("Draw Match!");
+					clearInterval(timer);
+					for (var i in toggle) {
+						if (toggle.hasOwnProperty(i)) $(i).onclick = null
+					}
+					leaderboard(pName, 0)
+				}
+				startAI(id); //does next move, checks for win, starts timer
+				
+			}
+			function startAI(id) {
+					alert(id);
+					for (var key in rowsets) {
+						if (rowsets.hasOwnProperty(key)) {
+							if(toggle[rowsets[key][0]] +
+								toggle[rowsets[key][1]] +
+								toggle[rowsets[key][2]] == 2) {
+								alert("Winpoint!");
+								if (toggle[rowsets[key][0]]==0) {
+									setClick(1, rowsets[key][0]);
+									alert("Done 1!")
+								}
+								else if (toggle[rowsets[key][1]]==0) {
+									setClick(1, rowsets[key][1]);
+									alert("Done 2!")
+								}
+								else {
+									setClick(1, rowsets[key][2]);
+									alert("Done 3!")
+								}
+								alert("Cyborg wins!");
+								clearInterval(timer);
+								for (var i in toggle) {
+									if (toggle.hasOwnProperty(i)) $(i).onclick = null
+								}
+								leaderboard(pName, -1)
+								return;
+							}
+						}
+					}
+					for (var key in rowsets) {
+						if (rowsets.hasOwnProperty(key)) {
+							if(toggle[rowsets[key][0]] +
+								toggle[rowsets[key][1]] +
+								toggle[rowsets[key][2]] == 6) {
+								alert("Blockpoint!")
+								if (toggle[rowsets[key][0]]==0) {
+									setClick(1, rowsets[key][0]);
+									resetTimer();
+									return;
+								}
+								else if (toggle[rowsets[key][1]]==0) {
+									setClick(1, rowsets[key][1]);
+									resetTimer();
+									return;
+								}
+								else {
+									setClick(1, rowsets[key][2]);
+									resetTimer();
+									return;
+								}
+							}
+						}
+					}
+					//if (Math.random >= 0.9) {
+						if ( (id!="t11") && (id!="t13") && (id!="t31") && (id!="t33")) {
+							alert("elsewhere placed");
+							if(toggle['t11']==0) {
+								setClick(1, 't11')
+								resetTimer();
+									return;
+							}
+							else if(toggle['t13']==0) {
+								setClick(1, 't13')
+								resetTimer();
+									return;
+							}
+							else if(toggle['t31']==0) {
+								setClick(1, 't31')
+								resetTimer();
+									return;
+							}
+							else {
+								setClick(1, 't33')
+								resetTimer();
+									return;
+							}
+						}
+						else {
+							alert("corner placed");
+							if (toggle['t22']==0) {
+								setClick(1, 't22')
+								resetTimer();
+									return;
+							}
+							else if(toggle['t21']==0) {
+								setClick(1, 't21')
+								resetTimer();
+									return;
+							}
+							else if(toggle['t12']==0) {
+								setClick(1, 't12')
+								resetTimer();
+									return;
+							}
+							else if(toggle['t23']==0) {
+								setClick(1, 't23')
+								resetTimer();
+									return;
+							}
+							else {
+								setClick(1, 't32')
+								resetTimer();
+									return;
+							}
+						}
+					/*}
+					else {
+						//do the random input
+						var keys = Object.keys(empties); //list of ids
+						var rkey = keys[Math.floor(keys.length * Math.random())];
+						setClick(1, rkey);
+					}*/
+					
+				}
+			function setClick(num, id) {
+				if (num==1) {
+					$(id).getElementsByClassName("ai")[0].style.display="initial";
+				}
+				else {
+					$(id).getElementsByClassName("ui")[0].style.display="initial";
+				}
+				toggle[id]=num;
+				delete empties[id];
+			}
+			function resetTimer() {
+				timey=10
+				timer = setInterval(function() {
+					if (timey==0) {
+					$('timer').innerHTML=timey;
+					timey=10;
+					randomIn();
+					return
+					}
+					$('timer').innerHTML=timey;
+					timey--;
+				}, 1000);
+			}
+	</script>
+</head>
+
+<body>
+	<div id="pModeSelect">
+	<center>
+	<form>
+		<input type="button" value="1 Player" onclick="game1P()" />
+		<input type="button" value="2 Player" />
+	</form>
+	</center>
+	</div>
+	<div id="tttHolder" style="margin-left:auto;
+			margin-right:auto;
+			width:40%;
+			height:0;
+			//padding-bottom:40%;
+			background-color:silver;
+			overflow:hidden;
+			display:none;">
+		<!-- The cells of the box -->
+		<div id="t11" class="ticCell" onclick="playerClick(this.id);">
+			<span class="helper"></span>
+			<img src="usericon.png" class="ui"/>
+			<img src="pcicon.png" class="ai"/>
+		</div>
+		<div id="t12" class="ticCell" onclick="playerClick(this.id);">
+			<span class="helper"></span>
+			<img src="usericon.png" class="ui"/>
+			<img src="pcicon.png" class="ai"/>
+		</div>
+		<div id="t13" class="ticCell" onclick="playerClick(this.id);">
+			<span class="helper"></span>
+			<img src="usericon.png" class="ui"/>
+			<img src="pcicon.png" class="ai"/>
+		</div>
+		<div id="t21" class="ticCell" onclick="playerClick(this.id);">
+			<span class="helper"></span>
+			<img src="usericon.png" class="ui"/>
+			<img src="pcicon.png" class="ai"/>
+		</div>
+		<div id="t22" class="ticCell" onclick="playerClick(this.id);">
+			<span class="helper"></span>
+			<img src="usericon.png" class="ui"/>
+			<img src="pcicon.png" class="ai"/>
+		</div>
+		<div id="t23" class="ticCell" onclick="playerClick(this.id);">
+			<span class="helper"></span>
+			<img src="usericon.png" class="ui"/>
+			<img src="pcicon.png" class="ai"/>
+		</div>
+		<div id="t31" class="ticCell" onclick="playerClick(this.id);">
+			<span class="helper"></span>
+			<img src="usericon.png" class="ui"/>
+			<img src="pcicon.png" class="ai"/>
+		</div>
+		<div id="t32" class="ticCell" onclick="playerClick(this.id);">
+			<span class="helper"></span>
+			<img src="usericon.png" class="ui"/>
+			<img src="pcicon.png" class="ai"/>
+		</div>
+		<div id="t33" class="ticCell" onclick="playerClick(this.id);">
+			<span class="helper"></span>
+			<img src="usericon.png" class="ui"/>
+			<img src="pcicon.png" class="ai"/>
+		</div>
+	</div>
+	<div id="pTurn" style="display:none;">
+		<span id="timer" style="color:red">10</span>
+	</div>
+	<div id="board" style="display:none;">
+		<table id="lBoard" border="1" style="width:100%">
+		</table>
+	</div>
+</body>
+</html>
