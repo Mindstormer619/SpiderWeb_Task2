@@ -115,7 +115,7 @@
 			for (var key in toggle) {
 				if (toggle.hasOwnProperty(key)) {
 					$(key).addEventListener('click', function(e) {
-						alert("Passing "+this.id);
+						//alert("Passing "+this.id);
 						playerClick(this.id);
 					}, false);
 				}
@@ -228,24 +228,24 @@
 				
 			}
 			function startAI(id) {
-					alert(id);
+					//alert(id);
 					for (var key in rowsets) {
 						if (rowsets.hasOwnProperty(key)) {
 							if(toggle[rowsets[key][0]] +
 								toggle[rowsets[key][1]] +
 								toggle[rowsets[key][2]] == 2) {
-								alert("Winpoint!");
+								//alert("Winpoint!");
 								if (toggle[rowsets[key][0]]==0) {
 									setClick(1, rowsets[key][0]);
-									alert("Done 1!")
+									//alert("Done 1!")
 								}
 								else if (toggle[rowsets[key][1]]==0) {
 									setClick(1, rowsets[key][1]);
-									alert("Done 2!")
+									//alert("Done 2!")
 								}
 								else {
 									setClick(1, rowsets[key][2]);
-									alert("Done 3!")
+									//alert("Done 3!")
 								}
 								$(rowsets[key][0]).style.backgroundColor='red';
 								$(rowsets[key][1]).style.backgroundColor='red';
@@ -266,7 +266,7 @@
 							if(toggle[rowsets[key][0]] +
 								toggle[rowsets[key][1]] +
 								toggle[rowsets[key][2]] == 6) {
-								alert("Blockpoint!")
+								//alert("Blockpoint!")
 								if (toggle[rowsets[key][0]]==0) {
 									setClick(1, rowsets[key][0]);
 									resetTimer();
@@ -287,7 +287,7 @@
 					}
 					if (Math.random() >= 0.5) {
 						if ( (id!="t11") && (id!="t13") && (id!="t31") && (id!="t33")) {
-							alert("elsewhere placed");
+							//alert("elsewhere placed");
 							if(toggle['t11']==0) {
 								setClick(1, 't11')
 								resetTimer();
@@ -310,7 +310,7 @@
 							}
 						}
 						else {
-							alert("corner placed");
+							//alert("corner placed");
 							if (toggle['t22']==0) {
 								setClick(1, 't22')
 								resetTimer();
@@ -340,7 +340,7 @@
 					}
 					else {
 						//do the random input
-						alert("Random!");
+						//alert("Random!");
 						var keys = Object.keys(empties); //list of ids
 						var rkey = keys[Math.floor(keys.length * Math.random())];
 						setClick(1, rkey);
@@ -392,7 +392,7 @@ function game2P() {
 	for (var key in toggle) {
 		if (toggle.hasOwnProperty(key)) {
 			$(key).addEventListener('click', function(e) {
-				alert("Passing "+this.id);
+				//alert("Passing "+this.id);
 				p2Click(this.id);
 			}, false);
 		}
@@ -524,6 +524,8 @@ function p2Click(id) {
 	<div id="pModeSelect">
 	<center>
 	<form>
+		<h1>Choose yo game!</h1>
+		<small>PS: 1Player is insanely hard</small><br />
 		<input type="button" value="1 Player" onclick="game1P()" />
 		<input type="button" value="2 Player" onclick="game2P()" />
 	</form>
@@ -585,11 +587,15 @@ function p2Click(id) {
 		</div>
 	</div>
 	<div id="pTurn" style="display:none;">
+	<center>
 		<div id="pID"></div>
 		<span id="timer" style="color:red">10</span>
+	</center>
 	</div>
 	<div id="board" style="display:none;">
+		<center><h1>Laedurbaord</h1></center>
 		<table id="lBoard" border="1" style="width:100%">
+		<tr><th>Naem</th><th>Skoar</th></tr>
 		</table>
 	</div>
 </body>
