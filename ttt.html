@@ -59,8 +59,6 @@
 			function() {
 				document.getElementById("tttHolder").style.height = getStyle( document.getElementById("tttHolder"),"width" );
 			}
-		window.onload=window.onresize;
-		
 		function $(id) {
 			return document.getElementById(id);
 		}
@@ -98,18 +96,11 @@
 			};
 			
 			var timey=10;
-			var timer = setInterval(function() {
-				if (timey==0) {
-					$('timer').innerHTML=timey;
-					timey=10;
-					randomIn();
-					return
-				}
-				$('timer').innerHTML=timey;
-				timey--;
-			}, 1000);
-			clearInterval(timer);
+			var timer;
+			var timer2;
 			var pName;
+			var pName2;
+			var pTog;
 		
 		function game1P() {
 			$('pModeSelect').style.display="none";
@@ -153,6 +144,7 @@
 								if (toggle.hasOwnProperty(i)) $(i).onclick = null
 							}
 							leaderboard(pName, 1)
+							printLeader()
 							return;
 						}
 					}
@@ -168,26 +160,28 @@
 						if (toggle.hasOwnProperty(i)) $(i).onclick = null
 					}
 					leaderboard(pName, 0)
+					printLeader()
 					return;
 				}
 				startAI(rkey);
 			}
 		function leaderboard(pname, score) {
-			$('tttHolder').style.display="none";
-			$('pTurn').style.display="none";
-			$('board').style.display="initial";
 			if(localStorage[pname]) {
 				localStorage[pname] = Number(localStorage[pname]) + score;
 			}
 			else {
 				localStorage.setItem(pname, score);
 			}
-			var strOpen = "<tr><td>"
-			var strMid = "</td><td>"
-			var strEnd = "</td></tr>"
+			
+		}
+		function printLeader() {
+			$('tttHolder').style.display="none";
+			$('pTurn').style.display="none";
+			$('board').style.display="initial";
 			for (var i=0; i<localStorage.length; i++) {
-				$('lBoard').innerHTML += strOpen + localStorage.key(i) + strMid +localStorage.getItem(localStorage.key(i)) + strEnd;
+					$('lBoard').innerHTML += "<tr><td>" + localStorage.key(i) + "</td><td>" +localStorage.getItem(localStorage.key(i)) + "</td></tr>";
 			}
+			//$('lBoard').innerHTML += strOpen + pname + strMid + localStorage.getItem(pname) + strEnd;
 		}
 		function playerClick(id) {
 				var elem = $(id);
@@ -211,6 +205,7 @@
 								if (toggle.hasOwnProperty(i)) $(i).onclick = null
 							}
 							leaderboard(pName, 1)
+							printLeader()
 							return;
 						}
 					}
@@ -226,6 +221,7 @@
 						if (toggle.hasOwnProperty(i)) $(i).onclick = null
 					}
 					leaderboard(pName, 0)
+					printLeader()
 					return;
 				}
 				startAI(id); //does next move, checks for win, starts timer
@@ -260,6 +256,7 @@
 									if (toggle.hasOwnProperty(i)) $(i).onclick = null
 								}
 								leaderboard(pName, -1)
+								printLeader()
 								return;
 							}
 						}
@@ -359,6 +356,10 @@
 				else if (num==3) {
 					$(id).getElementsByClassName("ui")[0].style.display="initial";
 				}
+				else {
+					$(id).getElementsByClassName("ui")[0].style.display="initial";
+					$(id).style.backgroundColor="blue";
+				}
 				toggle[id]=num;
 				delete empties[id];
 			}
@@ -376,6 +377,147 @@
 				}, 1000);
 			}
 	</script>
+	<script>
+function game2P() {
+	$('pModeSelect').style.display="none";
+	$('tttHolder').style.display = "block";
+	document.getElementById("tttHolder").style.height = getStyle( document.getElementById("tttHolder"),"width" );
+	$('pTurn').style.display = "initial";
+	
+	pName = prompt("Enter your name, player 1");
+	pName2 = prompt("Enter your name, player 2");
+	pTog = 3;
+	$('pID').innerHTML = "Player 1, GO!"; 
+	
+	for (var key in toggle) {
+		if (toggle.hasOwnProperty(key)) {
+			$(key).addEventListener('click', function(e) {
+				alert("Passing "+this.id);
+				p2Click(this.id);
+			}, false);
+		}
+	}
+	res2PTimer();
+}
+
+function res2PTimer() {
+	timey=10
+	timer2 = setInterval(function() {
+		if (timey==0) {
+		$('timer').innerHTML=timey;
+		timey=10;
+		randomIn2();
+		return
+		}
+		$('timer').innerHTML=timey;
+		timey--;
+	}, 1000);
+}
+
+function randomIn2() {
+	clearInterval(timer2);
+	var keys = Object.keys(empties); //list of ids
+	var rkey = keys[Math.floor(keys.length * Math.random())];
+	setClick(pTog, rkey);
+	for (var key in rowsets) {
+		if (rowsets.hasOwnProperty(key)) {
+			if(toggle[rowsets[key][0]] +
+				toggle[rowsets[key][1]] +
+				toggle[rowsets[key][2]] == (3*pTog)) {
+				$(rowsets[key][0]).style.backgroundColor='red';
+				$(rowsets[key][1]).style.backgroundColor='red';
+				$(rowsets[key][2]).style.backgroundColor='red';
+				alert("You win, player " + (pTog-2));
+				//clearInterval(timer);
+				for (var i in toggle) {
+					if (toggle.hasOwnProperty(i)) $(i).onclick = null
+				}
+				if(pTog==3) {
+					leaderboard(pName, 1);
+					leaderboard(pName2, -1);
+					printLeader()
+				}
+				else {
+					leaderboard(pName, -1);
+					leaderboard(pName2, 1);
+					printLeader()
+				}
+				return;
+			}
+		}
+	}
+	var k = 0;
+	for (var i in empties) {
+		if(empties.hasOwnProperty(i)) k++;
+	}
+	if (k==0) {
+		alert("Draw Match!");
+		//clearInterval(timer);
+		for (var i in toggle) {
+			if (toggle.hasOwnProperty(i)) $(i).onclick = null
+		}
+		leaderboard(pName, 0)
+		leaderboard(pName2,0);
+		printLeader()
+		return;
+	}
+	if(pTog==3) { pTog=4; $('pID').innerHTML = "Player 2, GO!"; }
+	else { pTog=3; $('pID').innerHTML = "Player 1, GO!"; }
+	res2PTimer();
+}
+function p2Click(id) {
+	if (toggle[id]!=0) {
+		return;
+	}
+	clearInterval(timer2);
+	setClick(pTog, id);
+	for (var key in rowsets) {
+		if (rowsets.hasOwnProperty(key)) {
+			if(toggle[rowsets[key][0]] +
+				toggle[rowsets[key][1]] +
+				toggle[rowsets[key][2]] == (3*pTog)) {
+				$(rowsets[key][0]).style.backgroundColor='red';
+				$(rowsets[key][1]).style.backgroundColor='red';
+				$(rowsets[key][2]).style.backgroundColor='red';
+				alert("You win, player " + (pTog-2));
+				//clearInterval(timer);
+				for (var i in toggle) {
+					if (toggle.hasOwnProperty(i)) $(i).onclick = null
+				}
+				if(pTog==3) {
+					leaderboard(pName, 1);
+					leaderboard(pName2, -1);
+					printLeader()
+				}
+				else {
+					leaderboard(pName, -1);
+					leaderboard(pName2, 1);
+					printLeader()
+				}
+				return;
+			}
+		}
+	}
+	var k = 0;
+	for (var i in empties) {
+		if(empties.hasOwnProperty(i)) k++;
+	}
+	if (k==0) {
+		alert("Draw Match!");
+		//clearInterval(timer);
+		for (var i in toggle) {
+			if (toggle.hasOwnProperty(i)) $(i).onclick = null
+		}
+		leaderboard(pName, 0)
+		leaderboard(pName2,0);
+		printLeader()
+		return;
+	}
+	if(pTog==3) { pTog=4; $('pID').innerHTML = "Player 2, GO!"; }
+	else { pTog=3; $('pID').innerHTML = "Player 1, GO!"; }
+	res2PTimer();
+}
+	</script>
 </head>
 
 <body>
@@ -383,7 +525,7 @@
 	<center>
 	<form>
 		<input type="button" value="1 Player" onclick="game1P()" />
-		<input type="button" value="2 Player" />
+		<input type="button" value="2 Player" onclick="game2P()" />
 	</form>
 	</center>
 	</div>
@@ -443,6 +585,7 @@
 		</div>
 	</div>
 	<div id="pTurn" style="display:none;">
+		<div id="pID"></div>
 		<span id="timer" style="color:red">10</span>
 	</div>
 	<div id="board" style="display:none;">
