@@ -120,15 +120,16 @@
 			pName = prompt("Enter your name, player.");
 			resetTimer();
 		
-			/*
+			
 			for (var key in toggle) {
 				if (toggle.hasOwnProperty(key)) {
-					$(key).onclick = function() {
-						playerClick(key);
-					};
+					$(key).addEventListener('click', function(e) {
+						alert("Passing "+this.id);
+						playerClick(this.id);
+					}, false);
 				}
 			}
-			*/
+			
 		}
 			
 			function randomIn() {
@@ -137,7 +138,39 @@
 				var keys = Object.keys(empties); //list of ids
 				var rkey = keys[Math.floor(keys.length * Math.random())];
 				setClick(3, rkey);
-				resetTimer();
+				//resetTimer();
+				for (var key in rowsets) {
+					if (rowsets.hasOwnProperty(key)) {
+						if(toggle[rowsets[key][0]] +
+							toggle[rowsets[key][1]] +
+							toggle[rowsets[key][2]] == 9) {
+							$(rowsets[key][0]).style.backgroundColor='red';
+							$(rowsets[key][1]).style.backgroundColor='red';
+							$(rowsets[key][2]).style.backgroundColor='red';
+							alert("You win, player!");
+							//clearInterval(timer);
+							for (var i in toggle) {
+								if (toggle.hasOwnProperty(i)) $(i).onclick = null
+							}
+							leaderboard(pName, 1)
+							return;
+						}
+					}
+				}
+				var k = 0;
+				for (var i in empties) {
+					if(empties.hasOwnProperty(i)) k++;
+				}
+				if (k==0) {
+					alert("Draw Match!");
+					//clearInterval(timer);
+					for (var i in toggle) {
+						if (toggle.hasOwnProperty(i)) $(i).onclick = null
+					}
+					leaderboard(pName, 0)
+					return;
+				}
+				startAI(rkey);
 			}
 		function leaderboard(pname, score) {
 			$('tttHolder').style.display="none";
@@ -169,6 +202,9 @@
 						if(toggle[rowsets[key][0]] +
 							toggle[rowsets[key][1]] +
 							toggle[rowsets[key][2]] == 9) {
+							$(rowsets[key][0]).style.backgroundColor='red';
+							$(rowsets[key][1]).style.backgroundColor='red';
+							$(rowsets[key][2]).style.backgroundColor='red';
 							alert("You win, player!");
 							clearInterval(timer);
 							for (var i in toggle) {
@@ -215,6 +251,9 @@
 									setClick(1, rowsets[key][2]);
 									alert("Done 3!")
 								}
+								$(rowsets[key][0]).style.backgroundColor='red';
+								$(rowsets[key][1]).style.backgroundColor='red';
+								$(rowsets[key][2]).style.backgroundColor='red';
 								alert("Cyborg wins!");
 								clearInterval(timer);
 								for (var i in toggle) {
@@ -249,7 +288,7 @@
 							}
 						}
 					}
-					//if (Math.random >= 0.9) {
+					if (Math.random() >= 0.5) {
 						if ( (id!="t11") && (id!="t13") && (id!="t31") && (id!="t33")) {
 							alert("elsewhere placed");
 							if(toggle['t11']==0) {
@@ -301,20 +340,23 @@
 									return;
 							}
 						}
-					/*}
+					}
 					else {
 						//do the random input
+						alert("Random!");
 						var keys = Object.keys(empties); //list of ids
 						var rkey = keys[Math.floor(keys.length * Math.random())];
 						setClick(1, rkey);
-					}*/
+						resetTimer();
+						return;
+					}
 					
 				}
 			function setClick(num, id) {
 				if (num==1) {
 					$(id).getElementsByClassName("ai")[0].style.display="initial";
 				}
-				else {
+				else if (num==3) {
 					$(id).getElementsByClassName("ui")[0].style.display="initial";
 				}
 				toggle[id]=num;
@@ -354,47 +396,47 @@
 			overflow:hidden;
 			display:none;">
 		<!-- The cells of the box -->
-		<div id="t11" class="ticCell" onclick="playerClick(this.id);">
+		<div id="t11" class="ticCell">
 			<span class="helper"></span>
 			<img src="usericon.png" class="ui"/>
 			<img src="pcicon.png" class="ai"/>
 		</div>
-		<div id="t12" class="ticCell" onclick="playerClick(this.id);">
+		<div id="t12" class="ticCell">
 			<span class="helper"></span>
 			<img src="usericon.png" class="ui"/>
 			<img src="pcicon.png" class="ai"/>
 		</div>
-		<div id="t13" class="ticCell" onclick="playerClick(this.id);">
+		<div id="t13" class="ticCell">
 			<span class="helper"></span>
 			<img src="usericon.png" class="ui"/>
 			<img src="pcicon.png" class="ai"/>
 		</div>
-		<div id="t21" class="ticCell" onclick="playerClick(this.id);">
+		<div id="t21" class="ticCell">
 			<span class="helper"></span>
 			<img src="usericon.png" class="ui"/>
 			<img src="pcicon.png" class="ai"/>
 		</div>
-		<div id="t22" class="ticCell" onclick="playerClick(this.id);">
+		<div id="t22" class="ticCell">
 			<span class="helper"></span>
 			<img src="usericon.png" class="ui"/>
 			<img src="pcicon.png" class="ai"/>
 		</div>
-		<div id="t23" class="ticCell" onclick="playerClick(this.id);">
+		<div id="t23" class="ticCell">
 			<span class="helper"></span>
 			<img src="usericon.png" class="ui"/>
 			<img src="pcicon.png" class="ai"/>
 		</div>
-		<div id="t31" class="ticCell" onclick="playerClick(this.id);">
+		<div id="t31" class="ticCell">
 			<span class="helper"></span>
 			<img src="usericon.png" class="ui"/>
 			<img src="pcicon.png" class="ai"/>
 		</div>
-		<div id="t32" class="ticCell" onclick="playerClick(this.id);">
+		<div id="t32" class="ticCell">
 			<span class="helper"></span>
 			<img src="usericon.png" class="ui"/>
 			<img src="pcicon.png" class="ai"/>
 		</div>
-		<div id="t33" class="ticCell" onclick="playerClick(this.id);">
+		<div id="t33" class="ticCell">
 			<span class="helper"></span>
 			<img src="usericon.png" class="ui"/>
 			<img src="pcicon.png" class="ai"/>
